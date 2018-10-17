@@ -5,7 +5,11 @@
   "description": "The fullstack application boilerplate for Adonisjs",
   "main": "index.js",
   "scripts": {
-    "start": "node server.js",
+    "migration": "ENV_SILENT=true node ace migration:run --force && ENV_SILENT=true node server.js",
+    "reset": "ENV_SILENT=true node ace migration:reset --force && ENV_SILENT=true node ace migration:run --force && ENV_SILENT=true node ace seed --force && ENV_SILENT=true node server.js",
+    "devreset": "node ace migration:reset --force && node ace migration:run --force && node ace seed --force",
+    "start": "ENV_SILENT=true node server.js",
+    "devstart": "node server.js",
     "test": "node ace test"
   },
   "keywords": [
@@ -25,7 +29,8 @@
     "@adonisjs/ignitor": "^2.0.8",
     "@adonisjs/lucid": "^6.1.3",
     "@adonisjs/session": "^1.0.27",
-    "@adonisjs/shield": "^1.0.8"
+    "@adonisjs/shield": "^1.0.8",
+    "pg": "^7.4.2"
   },
   "devDependencies": {},
   "autoload": {
