@@ -13,6 +13,8 @@ class PaletteLikeSchema extends Schema {
       table.foreign('palette_id')
         .references('palettes.id')
 
+      table.unique(['palette_id', 'unique_id'])
+
       table.timestamps()
     })
   }

@@ -1,26 +1,82 @@
 'use strict'
 
-class PaletteController {
-  async index () {
+const Palette = use('App/Models/Palette')
+const ApplicationController = use('App/Controllers/Http/ApplicationController')
+
+class PaletteController extends ApplicationController {
+  async index (ctx) {
+    const { request, response } = ctx
+    super.authorize(ctx, 'index')
+
+    const query = request._all //request.input
+    const organization = await request.post().parentModel
+    const palettes = await organization.palettes()
+    .filter(query).paginate(query.page)
+
+    response.status(200).json({
+      message: 'Palette list.',
+      data: palettes
+    })
   }
 
-  async create () {
+  async store (ctx) {
+    const { request, response } = ctx
+    super.authorize(ctx, 'store')
+
+    const organization = await request.post().parentModel
+    var palette = paletteParams(request)
+    await Palette.create(palette)
+    .then(async (result)=>{
+      response.status(201).json({
+        message: 'Successfully created a new Palette',
+        data: result
+      })
+    }).catch((err)=>{
+      response.status(422).json({
+        message: 'Failed creating Palette',
+        data: err.message
+      })
+    })
+
   }
 
-  async store () {
+  async show (ctx) {
+    const { request, response } = ctx
+    super.authorize(ctx, 'show')
+
+    const palette = request.post().model
+
+    response.status(200).json({
+      message: 'Here is your Palette.',
+      data: palette
+    })
   }
 
-  async show () {
-  }
+  async update (ctx) {
+    const { request, response } = ctx
+    super.authorize(ctx, 'update')
 
-  async edit () {
+    var palette = request.post().model
+    palette.merge(paletteParams(request))
+    // debugger
+    await palette.save()
+    .then((result)=>{
+      response.status(200).json({
+        message: 'Palette successfully updated.',
+        data: result
+      })
+    }).catch((err)=>{
+      response.status(422).json({
+        message: 'Failed updating Palette',
+        data: err.message
+      })
+    })
   }
+}
 
-  async update () {
-  }
-
-  async destroy () {
-  }
+function paletteParams(request) {
+  const fields = ['name', 'description', 'hexs']
+  return ApplicationController.getParams(request.post(), fields)
 }
 
 module.exports = PaletteController
