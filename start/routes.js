@@ -17,3 +17,13 @@
 const Route = use('Route')
 
 Route.on('/').render('welcome')
+
+Route.resource('palettes', 'PaletteController').apiOnly()
+.middleware(new Map([
+  [['show', 'destroy'], ['findItem:Palette']]
+]))
+
+Route.resource('palette_likes', 'PaletteLikeController').apiOnly()
+.middleware(new Map([
+  [['show', 'destroy'], ['findItem:PaletteLike']]
+]))

@@ -6,11 +6,9 @@ const ApplicationController = use('App/Controllers/Http/ApplicationController')
 class PaletteController extends ApplicationController {
   async index (ctx) {
     const { request, response } = ctx
-    super.authorize(ctx, 'index')
 
-    const query = request._all //request.input
-    const organization = await request.post().parentModel
-    const palettes = await organization.palettes()
+    const query = request._all
+    const palettes = await Palette.query()
     .filter(query).paginate(query.page)
 
     response.status(200).json({
@@ -23,8 +21,7 @@ class PaletteController extends ApplicationController {
     const { request, response } = ctx
     super.authorize(ctx, 'store')
 
-    const organization = await request.post().parentModel
-    var palette = paletteParams(request)
+    const palette = paletteParams(request)
     await Palette.create(palette)
     .then(async (result)=>{
       response.status(201).json({
@@ -52,22 +49,40 @@ class PaletteController extends ApplicationController {
     })
   }
 
-  async update (ctx) {
-    const { request, response } = ctx
-    super.authorize(ctx, 'update')
+  // async update (ctx) {
+  //   const { request, response } = ctx
+  //   super.authorize(ctx, 'update')
 
-    var palette = request.post().model
-    palette.merge(paletteParams(request))
-    // debugger
-    await palette.save()
+  //   var palette = request.post().model
+  //   palette.merge(paletteParams(request))
+
+  //   await palette.save()
+  //   .then((result)=>{
+  //     response.status(200).json({
+  //       message: 'Palette successfully updated.',
+  //       data: result
+  //     })
+  //   }).catch((err)=>{
+  //     response.status(422).json({
+  //       message: 'Failed updating Palette',
+  //       data: err.message
+  //     })
+  //   })
+  // }
+
+  async destroy (ctx) {
+    const { request, response } = ctx
+    const palette = request.post().model
+
+    await palette.delete()
     .then((result)=>{
       response.status(200).json({
-        message: 'Palette successfully updated.',
+        message: 'Contract successfully deleted.',
         data: result
       })
     }).catch((err)=>{
       response.status(422).json({
-        message: 'Failed updating Palette',
+        message: 'Failed deleting Palette',
         data: err.message
       })
     })
