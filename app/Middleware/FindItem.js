@@ -7,7 +7,7 @@ class FindItem {
     // schemes = [ModelName, parentId]
     const Model = use(`App/Models/${schemes[0]}`)
     const model = await Model.find(id)
-    if (!model) {
+    if (!(model && model.id)) {
       return response.status(404).json({
         message: `${schemes[0]} not found.`,
         id
@@ -17,12 +17,17 @@ class FindItem {
 
     if (schemes[1]) {
       request.body.parentModel = model
+      // request.body = {parentModel: model}
+    console.log('Data 1', request.body)
+
       // debugger
     } else {
-      request.body.model = model
-      request.body.item = model
-      // debugger
+      // request.body = {sd: "SdSD"}
+      request.body = {model}
+    // console.log('Data 2', request.body)
+    // debugger
     }
+    // console.log('Data', request.body)
 
     await next()
   }

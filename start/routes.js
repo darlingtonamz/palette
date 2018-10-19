@@ -23,7 +23,10 @@ Route.resource('palettes', 'PaletteController').apiOnly()
   [['show', 'destroy'], ['findItem:Palette']]
 ]))
 
-Route.resource('palette_likes', 'PaletteLikeController').apiOnly()
-.middleware(new Map([
-  [['show', 'destroy'], ['findItem:PaletteLike']]
-]))
+Route.group(() => {
+  Route.resource('likes', 'PaletteLikeController').apiOnly()
+  .middleware(new Map([
+    [['show', 'destroy'], ['findItem:PaletteLike']]
+  ]))
+}).prefix('/palettes/:palette_id')
+.middleware(['findItem:Palette,palette_id'])

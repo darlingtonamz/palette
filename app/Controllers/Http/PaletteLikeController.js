@@ -4,19 +4,19 @@ const PaletteLike = use('App/Models/PaletteLike')
 const ApplicationController = use('App/Controllers/Http/ApplicationController')
 
 class PaletteLikeController extends ApplicationController {
-  // async index (ctx) {
-  //   const { request, response } = ctx
+  async index (ctx) {
+    const { request, response } = ctx
 
-  //   const query = request._all //request.input
-  //   const organization = await request.post().parentModel
-  //   const paletteLikes = await organization.paletteLikes()
-  //   .filter(query).paginate(query.page)
+    const query = request._all //request.input
+    const palette = await request.post().parentModel
+    const paletteLikes = await palette.paletteLikes()
+    .filter(query).paginate(query.page)
 
-  //   response.status(200).json({
-  //     message: 'PaletteLike list.',
-  //     data: paletteLikes
-  //   })
-  // }
+    response.status(200).json({
+      message: 'PaletteLike list.',
+      data: paletteLikes
+    })
+  }
 
   async store (ctx) {
     const { request, response } = ctx
@@ -55,7 +55,7 @@ class PaletteLikeController extends ApplicationController {
     await paletteLike.delete()
     .then((result)=>{
       response.status(200).json({
-        message: 'Contract successfully deleted.',
+        message: 'PaletteLike successfully deleted.',
         data: result
       })
     }).catch((err)=>{
@@ -68,7 +68,7 @@ class PaletteLikeController extends ApplicationController {
 }
 
 function paletteLikeParams(request) {
-  const fields = ['name', 'description', 'hexs']
+  const fields = ['unique_id']
   return ApplicationController.getParams(request.post(), fields)
 }
 

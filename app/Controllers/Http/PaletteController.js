@@ -19,7 +19,7 @@ class PaletteController extends ApplicationController {
 
   async store (ctx) {
     const { request, response } = ctx
-    super.authorize(ctx, 'store')
+    // super.authorize(ctx, 'store')
 
     const palette = paletteParams(request)
     await Palette.create(palette)
@@ -39,7 +39,6 @@ class PaletteController extends ApplicationController {
 
   async show (ctx) {
     const { request, response } = ctx
-    super.authorize(ctx, 'show')
 
     const palette = request.post().model
 
@@ -77,7 +76,7 @@ class PaletteController extends ApplicationController {
     await palette.delete()
     .then((result)=>{
       response.status(200).json({
-        message: 'Contract successfully deleted.',
+        message: 'Palette successfully deleted.',
         data: result
       })
     }).catch((err)=>{
@@ -90,7 +89,7 @@ class PaletteController extends ApplicationController {
 }
 
 function paletteParams(request) {
-  const fields = ['name', 'description', 'hexs']
+  const fields = ['name', 'description', 'hexs', 'unique_id']
   return ApplicationController.getParams(request.post(), fields)
 }
 

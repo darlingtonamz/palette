@@ -16,10 +16,8 @@ class PaletteLike extends Model {
 }
 
 PaletteLike.rules = {
-  name:         'required',
-  description:  'required',
-  hexs:         'required',
-  unique_id:    'required'
+  palette_id:   'required',
+  // unique_id:    'required'
 }
 
 module.exports = PaletteLike

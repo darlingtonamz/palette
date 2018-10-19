@@ -13,6 +13,8 @@ class Palette extends Model {
   validate(){
     return ModelHook.validate(this)
   }
+
+  paletteLikes () { return this.hasMany('App/Models/PaletteLike')}
 }
 
 Palette.rules = {
