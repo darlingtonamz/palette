@@ -21,21 +21,30 @@ class PaletteLikeController extends ApplicationController {
   async store (ctx) {
     const { request, response } = ctx
     const palette = await request.post().parentModel
+
+    const existingLikes = (await palette.likes().where('unique_id', palette['unique_id']).fetch())
+
     var paletteLike = paletteLikeParams(request)
     paletteLike['palette_id'] = palette.id
 
-    await PaletteLike.create(paletteLike)
-    .then(async (result)=>{
-      response.status(201).json({
-        message: 'Successfully created a new PaletteLike',
-        data: result
+    if (!existingLikes.rows.length > 0) {
+      await PaletteLike.create(paletteLike)
+      .then(async (result)=>{
+        response.status(201).json({
+          message: 'Successfully created a new PaletteLike',
+          data: result
+        })
+      }).catch((err)=>{
+        response.status(422).json({
+          message: 'Failed creating PaletteLike',
+          data: err.message
+        })
       })
-    }).catch((err)=>{
-      response.status(422).json({
-        message: 'Failed creating PaletteLike',
-        data: err.message
-      })
-    })
+    } else {
+      // console.log('Existing', existingLikes.toJSON())
+      ctx.request.body.model = existingLikes.rows[0]
+      await this.destroy(ctx)
+    }
   }
 
   async show (ctx) {
@@ -51,19 +60,28 @@ class PaletteLikeController extends ApplicationController {
   async destroy (ctx) {
     const { request, response } = ctx
     const paletteLike = request.post().model
+    const palette = request.post().parentModel
+    // console.log(request.body)+
+    const uniqueId = request.post()['unique_id']
 
-    await paletteLike.delete()
-    .then((result)=>{
-      response.status(200).json({
-        message: 'PaletteLike successfully deleted.',
-        data: result
+    if(uniqueId === palette['unique_id']) {
+      await paletteLike.delete()
+      .then((result)=>{
+        response.status(200).json({
+          message: 'PaletteLike successfully deleted.',
+          data: result
+        })
+      }).catch((err)=>{
+        response.status(422).json({
+          message: 'Failed deleting PaletteLike',
+          data: err.message
+        })
       })
-    }).catch((err)=>{
-      response.status(422).json({
-        message: 'Failed deleting PaletteLike',
-        data: err.message
+    } else {
+      response.status(403).json({
+        message: 'Unauthorized. PaletteLike doesn\'t belong to you',
       })
-    })
+    }
   }
 }
 

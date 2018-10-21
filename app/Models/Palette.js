@@ -15,6 +15,7 @@ class Palette extends Model {
   }
 
   paletteLikes () { return this.hasMany('App/Models/PaletteLike')}
+  likes () { return this.hasMany('App/Models/PaletteLike')}
 }
 
 Palette.rules = {

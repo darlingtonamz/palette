@@ -72,19 +72,26 @@ class PaletteController extends ApplicationController {
   async destroy (ctx) {
     const { request, response } = ctx
     const palette = request.post().model
+    const uniqueId = request.post()['unique_id']
 
-    await palette.delete()
-    .then((result)=>{
-      response.status(200).json({
-        message: 'Palette successfully deleted.',
-        data: result
+    if(uniqueId === palette['unique_id']) {
+      await palette.delete()
+      .then((result)=>{
+        response.status(200).json({
+          message: 'Palette successfully deleted.',
+          data: result
+        })
+      }).catch((err)=>{
+        response.status(422).json({
+          message: 'Failed deleting Palette',
+          data: err.message
+        })
       })
-    }).catch((err)=>{
-      response.status(422).json({
-        message: 'Failed deleting Palette',
-        data: err.message
+    } else {
+      response.status(403).json({
+        message: 'Unauthorized. Palette doesn\'t belong to you',
       })
-    })
+    }
   }
 }
 
